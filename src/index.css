@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Instrument+Serif:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-serif: "Instrument Serif", serif;
+}
+
+:root {
+  --bg: #0A0B0E;
+  --ink: #FFFFFF;
+  --accent: #00F0FF;
+  --dim: #1A1D23;
+  --line: rgba(255, 255, 255, 0.1);
+  --glass: rgba(255, 255, 255, 0.03);
+}
+
+.light {
+  --bg: #F8F9FA;
+  --ink: #111111;
+  --accent: #0066FF;
+  --dim: #E9ECEF;
+  --line: rgba(0, 0, 0, 0.1);
+  --glass: rgba(0, 0, 0, 0.02);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* Buttons */
+.btn-tech {
+  @apply px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] border transition-all duration-200 flex items-center gap-3 relative overflow-hidden;
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.btn-tech:hover {
+  border-color: var(--accent);
+  background: var(--glass);
+}
+
+.btn-tech.active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+/* Tooltip */
+.fractal-tooltip {
+  @apply fixed z-[999] p-6 shadow-2xl pointer-events-none backdrop-blur-xl border border-white/10;
+  background-color: var(--bg);
+  color: var(--ink);
+  min-width: 300px;
+  max-width: 380px;
+  transition: opacity 0.2s, scale 0.2s;
+}
+
+/* Grid helper */
+.custom-grid-bg {
+  mask-image: linear-gradient(to bottom, black, transparent);
+  background-image: 
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 20px 20px;
+  position: absolute;
+  inset: 0;
+}
+
+.title-italic {
+  font-family: var(--font-serif);
+  font-style: italic;
+}
