@@ -36,15 +36,7 @@ import type {
   DisplayObject,
   Tim
 } from './types';
-
-
-// 16-dot perimeter grid mapping for Churyumov model (6x6 grid, excluding corners)
-const CHURYUMOV_P16 = [
-  [0,1], [0,2], [0,3], [0,4], // Top side (Alpha)
-  [1,5], [2,5], [3,5], [4,5], // Right side (Beta)
-  [5,4], [5,3], [5,2], [5,1], // Bottom side (Gamma)
-  [4,0], [3,0], [2,0], [1,0]  // Left side (Delta)
-];
+import { CHURYUMOV_P16 } from './constants/churyumov';
 
 interface DotPatternProps {
   bits: number[];
