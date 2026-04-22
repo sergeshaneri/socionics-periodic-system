@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Sun,
@@ -38,6 +38,7 @@ import type {
 } from './types';
 import { CHURYUMOV_P16 } from './constants/churyumov';
 import { UI_STRINGS } from './i18n/ui-strings';
+import { useHoverState } from './hooks/useHoverState';
 
 interface DotPatternProps {
   bits: number[];
@@ -384,11 +385,14 @@ export default function App() {
   const [objectType, setObjectType] = useState<ObjectType>('TIM');
   const [modelType, setModelType] = useState<ModelType>('PROJECTIVE');
   const [view, setView] = useState<View>('EXPLORE');
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-  const [hoveredTraitIdx, setHoveredTraitIdx] = useState<number | null>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [darkMode, setDarkMode] = useState(true);
   const [showAbout, setShowAbout] = useState(false);
+
+  const {
+    hoveredIdx, setHoveredIdx,
+    hoveredTraitIdx, setHoveredTraitIdx,
+    mousePos, setMousePos,
+  } = useHoverState([view, modelType, objectType, lang, darkMode]);
 
   const traits = lang === 'RU' ? TRAITS_RU : TRAITS_EN;
   const poles = lang === 'RU' ? POLES_RU : POLES_EN;
@@ -497,11 +501,6 @@ export default function App() {
   const color = activeItem ? QUADRA_COLORS[activeItem.quadra || 0] : 'var(--accent)';
 
   const help = lang === 'RU' ? ABOUT_TEXT_RU : ABOUT_TEXT_EN;
-
-  useEffect(() => {
-    setHoveredIdx(null);
-    setHoveredTraitIdx(null);
-  }, [view, modelType, objectType, lang, darkMode]);
 
   return (
     <div className={`flex flex-col h-screen select-none ${!darkMode ? 'light' : ''}`} style={{ backgroundColor: 'var(--bg)', color: 'var(--ink)' }}>
