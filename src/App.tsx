@@ -37,6 +37,7 @@ import type {
   Tim
 } from './types';
 import { CHURYUMOV_P16 } from './constants/churyumov';
+import { UI_STRINGS } from './i18n/ui-strings';
 
 interface DotPatternProps {
   bits: number[];
@@ -393,6 +394,7 @@ export default function App() {
   const poles = lang === 'RU' ? POLES_RU : POLES_EN;
   const tims = lang === 'RU' ? TIMS_RU : TIMS_EN;
   const itrs = lang === 'RU' ? ITR_RU : ITR_EN;
+  const UI = UI_STRINGS[lang];
 
   const currentObjects = useMemo(() => {
     if (objectType === 'TIM') return tims.map((t, idx) => ({ ...t, bits: HADAMARD_MATRIX[idx] }));
@@ -408,22 +410,6 @@ export default function App() {
       return { id: displayName, name: displayName, bits: HADAMARD_MATRIX[idx], quadra: Math.floor(idx / 4) };
     });
   }, [objectType, tims, itrs, traits, lang]);
-
-  // UI Strings
-  const UI = {
-    title: lang === 'RU' ? "Периодическая Система Социона" : "Socionics Periodic System",
-    subtitle: lang === 'RU' ? "ФРАКТАЛЬНО-ПАТТЕРННОЕ МОДЕЛИРОВАНИЕ" : "FRACTAL-PATTERN MODELING",
-    explore: lang === 'RU' ? "Паттерны" : "Patterns",
-    hadamard: lang === 'RU' ? "Матрица Адамара" : "Hadamard Matrix",
-    model: lang === 'RU' ? "Модель" : "Model",
-    projective: lang === 'RU' ? "Квадрат" : "Square",
-    churyumov: lang === 'RU' ? "Периметр" : "Perimeter",
-    object: lang === 'RU' ? "Объект" : "Object",
-    tims: lang === 'RU' ? "Типы" : "Types",
-    itrs: lang === 'RU' ? "Отношения" : "Relations",
-    arps: lang === 'RU' ? "Признаки" : "Traits",
-    about: lang === 'RU' ? "Справка" : "Help",
-  };
 
   const getTraitExplanation = (traitIdx: number, itemIdx: number) => {
     if (itemIdx >= HADAMARD_MATRIX.length || traitIdx >= HADAMARD_MATRIX[0].length) return null;
