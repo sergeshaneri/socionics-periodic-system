@@ -6,10 +6,6 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Sun,
-  Moon
-} from 'lucide-react';
-import { 
   TRAITS_EN, 
   TRAITS_RU, 
   POLES_EN, 
@@ -38,6 +34,8 @@ import { ProjectiveModel } from './components/models/ProjectiveModel';
 import { HadamardView } from './components/views/HadamardView';
 import { TraitTooltip } from './components/tooltip/TraitTooltip';
 import { AboutModal } from './components/about/AboutModal';
+import { Header } from './components/layout/Header';
+import { Toolbar } from './components/layout/Toolbar';
 
 export default function App() {
   const [lang, setLang] = useState<Lang>('RU');
@@ -101,75 +99,27 @@ export default function App() {
         <div className="custom-grid-bg" />
       </div>
 
-      <header className="px-8 md:px-16 py-6 border-b border-[var(--line)] flex flex-wrap gap-8 justify-between items-center bg-[var(--bg)]/90 backdrop-blur-xl z-[60] shadow-sm">
-        <div className="flex flex-wrap items-center gap-8 md:gap-12">
-          <div className="min-w-fit">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-black title-italic leading-none uppercase tracking-tighter">{UI.title}</h1>
-            <div className="text-[9px] md:text-[10px] font-bold text-accent uppercase tracking-[0.4em] mt-2">{UI.subtitle}</div>
-          </div>
-          <div className="flex border border-[var(--line)] min-h-10 bg-[var(--dim)]/30 p-1 flex-wrap gap-1">
-            <button 
-              onClick={() => setView('EXPLORE')}
-              className={`px-4 md:px-6 py-2 text-[10px] uppercase font-black tracking-widest transition-all ${view === 'EXPLORE' ? 'bg-accent text-bg' : 'opacity-40 hover:opacity-100'}`}
-            >
-              {UI.explore}
-            </button>
-            <div className="w-[1px] h-4 bg-[var(--line)] self-center mx-3" />
-            <button 
-              onClick={() => setView('HADAMARD')}
-              className={`px-4 md:px-6 py-2 text-[10px] uppercase font-black tracking-widest transition-all ${view === 'HADAMARD' ? 'bg-accent text-bg' : 'opacity-40 hover:opacity-100'}`}
-            >
-              {UI.hadamard}
-            </button>
-          </div>
-        </div>
-
-        <div className="flex gap-2 items-center">
-            <button 
-              onClick={() => setLang(lang === 'RU' ? 'EN' : 'RU')}
-              className="px-4 h-10 border border-[var(--line)] text-[11px] font-black uppercase tracking-widest hover:bg-[var(--glass)]"
-            >
-              {lang}
-            </button>
-            <button 
-              onClick={() => setDarkMode(!darkMode)}
-              className="w-10 h-10 border border-[var(--line)] flex items-center justify-center hover:bg-[var(--glass)]"
-            >
-              {darkMode ? <Sun size={14} /> : <Moon size={14} />}
-            </button>
-            <button 
-              onClick={() => setShowAbout(true)}
-              className="px-6 h-10 bg-ink text-bg text-[11px] font-black uppercase tracking-[0.2em] shadow-lg hover:scale-105 transition-transform"
-            >
-              {UI.about}
-            </button>
-        </div>
-      </header>
+      <Header
+        UI={UI}
+        lang={lang}
+        darkMode={darkMode}
+        view={view}
+        onToggleLang={() => setLang(lang === 'RU' ? 'EN' : 'RU')}
+        onToggleTheme={() => setDarkMode(!darkMode)}
+        onOpenAbout={() => setShowAbout(true)}
+        onChangeView={setView}
+      />
 
       <AboutModal show={showAbout} onClose={() => setShowAbout(false)} lang={lang} content={help} UI={UI} />
 
       <main className="flex-1 flex flex-col min-h-0 bg-[var(--bg)] relative">
-        {/* Horizontal Toolbar */}
-        <div className="w-full border-b border-[var(--line)] flex items-center justify-center gap-6 md:gap-12 py-3 px-4 md:px-8 bg-[var(--bg)]/95 backdrop-blur-md z-50 shadow-sm overflow-x-auto no-scrollbar">
-           <div className="flex items-center gap-3 md:gap-4 shrink-0">
-              <div className="text-[10px] font-mono opacity-30 uppercase tracking-[0.2em]">{UI.model}</div>
-                <div className="flex border border-[var(--line)] p-1 bg-[var(--dim)]/30">
-                  <button onClick={() => setModelType('PROJECTIVE')} className={`btn-tech border-none whitespace-nowrap min-h-[40px] px-6 ${modelType === 'PROJECTIVE' ? 'active' : ''}`}>{UI.projective}</button>
-                  <button onClick={() => setModelType('CHURYUMOV')} className={`btn-tech border-none whitespace-nowrap min-h-[40px] px-6 ${modelType === 'CHURYUMOV' ? 'active' : ''}`}>{UI.churyumov}</button>
-                </div>
-           </div>
-
-           <div className="h-6 w-[1px] bg-[var(--line)] shrink-0" />
-
-           <div className="flex items-center gap-3 md:gap-4 shrink-0">
-              <div className="text-[10px] font-mono opacity-30 uppercase tracking-[0.2em]">{UI.object}</div>
-              <div className="flex border border-[var(--line)] p-1 bg-[var(--dim)]/30">
-                <button onClick={() => setObjectType('TIM')} className={`btn-tech border-none whitespace-nowrap min-h-[40px] px-6 ${objectType === 'TIM' ? 'active' : ''}`}>{UI.tims}</button>
-                <button onClick={() => setObjectType('ITR')} className={`btn-tech border-none whitespace-nowrap min-h-[40px] px-6 ${objectType === 'ITR' ? 'active' : ''}`}>{UI.itrs}</button>
-                <button onClick={() => setObjectType('RD')} className={`btn-tech border-none whitespace-nowrap min-h-[40px] px-6 ${objectType === 'RD' ? 'active' : ''}`}>{UI.arps}</button>
-              </div>
-           </div>
-        </div>
+        <Toolbar
+          UI={UI}
+          modelType={modelType}
+          objectType={objectType}
+          onChangeModel={setModelType}
+          onChangeObject={setObjectType}
+        />
 
         <div className="flex-1 relative flex justify-center items-start overflow-auto p-12 md:p-16 lg:p-20 no-scrollbar pb-32">
            {view === 'EXPLORE' ? (
