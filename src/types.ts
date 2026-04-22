@@ -41,3 +41,15 @@ export interface AboutContent {
   semantics: string;
   detailed: string;
 }
+
+export interface TraitExplanation {
+  subjectName: string;
+  poleName: string;
+  bit: number;
+  description: string;
+  fullTrait: string;
+  correspondingTim: Tim;
+  correspondingItr: string;
+  correspondingRd: string;
+  equivalenceBase: string;
+}
