@@ -6,15 +6,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Info, 
-  Languages, 
-  Grid3X3, 
-  Square, 
-  Layers, 
-  ChevronRight,
   Sun,
   Moon,
-  Database,
   X
 } from 'lucide-react';
 import { 
@@ -30,18 +23,20 @@ import {
   ITR_RU, 
   HADAMARD_MATRIX, 
   QUADRA_COLORS,
-  SEMANTICS_RU,
-  SEMANTICS_EN,
   ABOUT_TEXT_RU,
-  ABOUT_TEXT_EN,
-  QUADRA_NAMES_EN,
-  QUADRA_NAMES_RU
+  ABOUT_TEXT_EN
 } from './data';
+import type {
+  Lang,
+  ObjectType,
+  ModelType,
+  View,
+  UIStrings,
+  AboutContent,
+  DisplayObject,
+  Tim
+} from './types';
 
-type Lang = 'RU' | 'EN';
-type ObjectType = 'TIM' | 'ITR' | 'RD';
-type ModelType = 'PROJECTIVE' | 'CHURYUMOV';
-type View = 'EXPLORE' | 'HADAMARD';
 
 // 16-dot perimeter grid mapping for Churyumov model (6x6 grid, excluding corners)
 const CHURYUMOV_P16 = [
@@ -210,15 +205,15 @@ const DotPattern = React.memo(({
 });
 
 interface ModelProps {
-  currentObjects: any[];
+  currentObjects: DisplayObject[];
   lang: Lang;
-  UI: any;
+  UI: UIStrings;
   hoveredIdx: number | null;
   setHoveredIdx: (idx: number | null) => void;
   hoveredTraitIdx: number | null;
   setHoveredTraitIdx: (idx: number | null) => void;
   setMousePos: (pos: { x: number; y: number }) => void;
-  objectType: string;
+  objectType: ObjectType;
 }
 
 const ChuryumovModel = React.memo(({ 
@@ -238,8 +233,6 @@ const ChuryumovModel = React.memo(({
     { top: '90%', left: '75%' }, { top: '90%', left: '58%' }, { top: '90%', left: '42%' }, { top: '90%', left: '25%' },
     { top: '75%', left: '10%' }, { top: '58%', left: '10%' }, { top: '42%', left: '10%' }, { top: '25%', left: '10%' },
   ];
-  const qNames = lang === 'RU' ? QUADRA_NAMES_RU : QUADRA_NAMES_EN;
-
   return (
     <div className="relative w-full aspect-square max-w-[800px] flex items-center justify-center bg-[var(--bg)] border border-[var(--line)] shadow-2xl rounded-sm my-12">
       <div className="absolute inset-[26%] bg-[var(--dim)]/40 border border-[var(--line)] flex flex-col items-center justify-center z-0 overflow-hidden rounded-sm backdrop-blur-md">
@@ -340,7 +333,16 @@ const ProjectiveModel = React.memo(({
   );
 });
 
-const HadamardView = React.memo(({ UI, lang, traits, HADAMARD_MATRIX, tims, itrs }: { UI: any, lang: Lang, traits: string[], HADAMARD_MATRIX: number[][], tims: any[], itrs: string[] }) => (
+interface HadamardViewProps {
+  UI: UIStrings;
+  lang: Lang;
+  traits: string[];
+  HADAMARD_MATRIX: number[][];
+  tims: (Tim | DisplayObject)[];
+  itrs: string[];
+}
+
+const HadamardView = React.memo(({ UI, lang, traits, HADAMARD_MATRIX, tims, itrs }: HadamardViewProps) => (
   <div className="p-12 h-full overflow-auto bg-[var(--bg)]">
     <div className="max-w-5xl mx-auto">
       <h2 className="text-4xl font-black title-italic uppercase mb-4">{UI.hadamard}</h2>
@@ -466,7 +468,6 @@ export default function App() {
       }
     } 
     else if (objectType === 'RD') {
-      const activeRD = currentObjects[itemIdx];
       const targetTIM = tims[traitIdx];
       subjectName = targetTIM.id;
       poleName = poles[itemIdx] ? poles[itemIdx][bit === 1 ? 0 : 1] : '';
@@ -505,7 +506,7 @@ export default function App() {
       correspondingTim: tims[traitIdx],
       correspondingItr: itrs[traitIdx],
       correspondingRd: poles[traitIdx] ? `${poles[traitIdx][0]}/${poles[traitIdx][1]}` : (traits[traitIdx] || ''),
-      equivalenceBase: baseNames[objectType]
+      equivalenceBase: baseNames[objectType as keyof typeof baseNames]
     };
   };
 
@@ -517,12 +518,6 @@ export default function App() {
 
   const color = activeItem ? QUADRA_COLORS[activeItem.quadra || 0] : 'var(--accent)';
 
-  const getCorrespondingTim = (traitIdx: number) => {
-    // Extensive characteristics: a trait (Reinin dimension) in our 16x16 
-    // system corresponds to a TIM when looked at extensively.
-    const timList = lang === 'RU' ? TIMS_RU : TIMS_EN;
-    return timList[traitIdx] || null;
-  };
   const help = lang === 'RU' ? ABOUT_TEXT_RU : ABOUT_TEXT_EN;
 
   useEffect(() => {
@@ -719,7 +714,15 @@ export default function App() {
   );
 }
 
-function AboutModal({ show, onClose, lang, UI, content }: any) {
+interface AboutModalProps {
+  show: boolean;
+  onClose: () => void;
+  lang: Lang;
+  UI: UIStrings;
+  content: AboutContent;
+}
+
+function AboutModal({ show, onClose, lang, UI, content }: AboutModalProps) {
   if (!show) return null;
   return (
     <AnimatePresence>

@@ -1,15 +1,16 @@
+import type { Tim, AboutContent } from './types';
 
-export const TRAITS_EN = [
+export const TRAITS_EN: string[] = [
   "Existence", "Extraverts", "Carefree", "Intuitives", "Democrats", "Positivists", "Yielding", "Logicians",
   "Merry", "Constructivists", "Right/Process", "Questors", "Judicious", "Tacticians", "Irrationals", "Statics"
 ];
 
-export const TRAITS_RU = [
+export const TRAITS_RU: string[] = [
   "Существование", "Экстраверты", "Беспечные", "Интуиты", "Демократы", "Позитивисты", "Уступчивые", "Логики",
   "Весёлые", "Конструктивисты", "Правые", "Квестимы", "Рассудительные", "Тактики", "Иррационалы", "Статики"
 ];
 
-export const POLES_EN = [
+export const POLES_EN: string[][] = [
   ["Existents", "Non-existents"],
   ["Extravert", "Introvert"],
   ["Carefree", "Farsighted"],
@@ -28,7 +29,7 @@ export const POLES_EN = [
   ["Static", "Dynamic"]
 ];
 
-export const POLES_RU = [
+export const POLES_RU: string[][] = [
   ["Существующие", "Несуществующие"],
   ["Экстраверты", "Интроверты"],
   ["Беспечные", "Предусмотрительные"],
@@ -47,7 +48,7 @@ export const POLES_RU = [
   ["Статики", "Динамики"]
 ];
 
-export const POLES_ADJ_RU = [
+export const POLES_ADJ_RU: string[][] = [
   ["Существующие", "Несуществующие"],
   ["Экстравертные", "Интровертные"],
   ["Беспечные", "Предусмотрительные"],
@@ -66,7 +67,7 @@ export const POLES_ADJ_RU = [
   ["Статические", "Динамические"]
 ];
 
-export const POLES_ADJ_EN = [
+export const POLES_ADJ_EN: string[][] = [
   ["Existential", "Non-existential"],
   ["Extraverted", "Introverted"],
   ["Carefree", "Farsighted"],
@@ -85,7 +86,7 @@ export const POLES_ADJ_EN = [
   ["Static", "Dynamic"]
 ];
 
-export const SEMANTICS_RU = [
+export const SEMANTICS_RU: string[] = [
   "Внимание экстравертов больше направлено на внешний мир, интровертов — на внутренний.",
   "Беспечные верят в новый опыт, предусмотрительные опираются на старый.",
   "Интуиты воспринимают мир умозрительно, сенсорики — через ощущения.",
@@ -103,7 +104,7 @@ export const SEMANTICS_RU = [
   "Статики видят мир как серию кадров, динамики — как непрерывный поток."
 ];
 
-export const SEMANTICS_EN = [
+export const SEMANTICS_EN: string[] = [
   "Extraverts focus on the outside world/objects; Introverts focus on the internal world/relations.",
   "Carefree types believe in new experiences; Farsighted types rely on past experience and planning.",
   "Intuitives perceive through abstract ideas/possibilities; Sensors through concrete facts/sensations.",
@@ -121,7 +122,7 @@ export const SEMANTICS_EN = [
   "Statics see the world as a series of snapshots; Dynamics see it as a continuous stream/process."
 ];
 
-export const TIMS_EN = [
+export const TIMS_EN: Tim[] = [
   { id: "ILE", name: "ILE", value: "Cognition", quadra: 0 },
   { id: "SEI", name: "SEI", value: "Consumption", quadra: 0 },
   { id: "ESE", name: "ESE", value: "Activation", quadra: 0 },
@@ -140,7 +141,7 @@ export const TIMS_EN = [
   { id: "EII", name: "EII", value: "Humanism", quadra: 3 }
 ];
 
-export const TIMS_RU = [
+export const TIMS_RU: Tim[] = [
   { id: "ИЛЭ", name: "Дон Кихот", value: "Познание", quadra: 0 },
   { id: "СЭИ", name: "Дюма", value: "Потребление", quadra: 0 },
   { id: "ЭСЭ", name: "Гюго", value: "Активация", quadra: 0 },
@@ -159,14 +160,14 @@ export const TIMS_RU = [
   { id: "ЭИИ", name: "Достоевский", value: "Гуманизм", quadra: 3 }
 ];
 
-export const ITR_EN = [
+export const ITR_EN: string[] = [
   "Identity", "Duality", "Activation", "Mirror",
   "Beneficiary", "Supervisee", "Business", "Mirage",
   "Quasi-Identity", "Conflict", "Superego", "Extinguishment",
   "Kindred", "Semi-Dual", "Benefactor", "Supervisor"
 ];
 
-export const ITR_RU = [
+export const ITR_RU: string[] = [
   "Тождественные", "Дуальные", "Активационные", "Зеркальные",
   "Прием Заказа", "Прием Контроля", "Деловые", "Миражные",
   "Квазитождественные", "Конфликтные", "Суперэго", "Полной Противоположности",
@@ -174,7 +175,7 @@ export const ITR_RU = [
 ];
 
 // Hadamard matrix generation
-export const HADAMARD_MATRIX = [
+export const HADAMARD_MATRIX: number[][] = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
   [1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0],
@@ -193,7 +194,7 @@ export const HADAMARD_MATRIX = [
   [1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1]
 ];
 
-export const ABOUT_TEXT_RU = {
+export const ABOUT_TEXT_RU: AboutContent = {
   intro: "Система основана на исследованиях Семена Чурюмова, который открыл фрактальные свойства социона и их связь с матрицами Адамара.",
   hadamard: "Матрица Адамара H16 является математическим ядром системы. Она описывает 16-мерное пространство отношений, которое проецируется на плоскость в виде паттернов.",
   fractality: "Фрактальность проявляется в том, что одна и та же структура (диаграмма) описывает разные уровни реальности: ТИМы (типы), ИТО (отношения) и ПР (признаки Рейнина).",
@@ -202,7 +203,7 @@ export const ABOUT_TEXT_RU = {
   detailed: "Экстенсивные характеристики описывают социон как целостный математический объект. Каждый ТИМ является вектором в 16-мерном базисе признаков. Система позволяет визуализировать биекцию — взаимно однозначное соответствие между типами и их признаками. Это означает, что зная паттерн признаков, можно однозначно определить тип, и наоборот."
 };
 
-export const ABOUT_TEXT_EN = {
+export const ABOUT_TEXT_EN: AboutContent = {
   intro: "The system is based on the research of Semyon Churyumov, who discovered the fractal properties of the socion and their connection with Hadamard matrices.",
   hadamard: "The Hadamard H16 matrix is the mathematical core of the system. It describes a 16-dimensional space of relations projected onto a plane as patterns.",
   fractality: "Fractality is revealed in that the same structure (diagram) describes different levels of reality: TIMs (types), ITRs (relations), and RDs (Reinin dichotomies).",
@@ -211,10 +212,10 @@ export const ABOUT_TEXT_EN = {
   detailed: "Extensive characteristics describe the socion as a unified mathematical object. Each TIM is a vector in a 16-dimensional trait basis. The system allows visualizing the bijection — a one-to-one correspondence between types and their traits. This means that knowing the trait pattern, one can uniquely identify the type, and vice versa."
 };
 
-export const QUADRA_NAMES_RU = ["Альфа", "Бета", "Гамма", "Дельта"];
-export const QUADRA_NAMES_EN = ["Alpha", "Beta", "Gamma", "Delta"];
+export const QUADRA_NAMES_RU: string[] = ["Альфа", "Бета", "Гамма", "Дельта"];
+export const QUADRA_NAMES_EN: string[] = ["Alpha", "Beta", "Gamma", "Delta"];
 
-export const QUADRA_COLORS = [
+export const QUADRA_COLORS: string[] = [
   "#00F0FF", // Alpha (Blue/Light blue)
   "#FF3131", // Beta (Red)
   "#FFF000", // Gamma (Yellow)
