@@ -53,3 +53,15 @@ export interface TraitExplanation {
   correspondingRd: string;
   equivalenceBase: string;
 }
+
+export interface ModelProps {
+  currentObjects: DisplayObject[];
+  lang: Lang;
+  UI: UIStrings;
+  hoveredIdx: number | null;
+  setHoveredIdx: (idx: number | null) => void;
+  hoveredTraitIdx: number | null;
+  setHoveredTraitIdx: (idx: number | null) => void;
+  setMousePos: (pos: { x: number; y: number }) => void;
+  objectType: ObjectType;
+}
