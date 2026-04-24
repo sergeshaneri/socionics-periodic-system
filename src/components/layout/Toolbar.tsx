@@ -1,7 +1,10 @@
-import type { ModelType, ObjectType, UIStrings } from '../../types';
+import type { Lang, ModelType, ObjectType, UIStrings, View } from '../../types';
+import { QUADRA_COLORS, QUADRA_NAMES_EN, QUADRA_NAMES_RU } from '../../data';
 
 export interface ToolbarProps {
   UI: UIStrings;
+  lang: Lang;
+  view: View;
   modelType: ModelType;
   objectType: ObjectType;
   onChangeModel: (m: ModelType) => void;
@@ -10,30 +13,65 @@ export interface ToolbarProps {
 
 export function Toolbar({
   UI,
+  lang,
+  view,
   modelType,
   objectType,
   onChangeModel,
   onChangeObject,
 }: ToolbarProps) {
+  const quadraNames = lang === 'RU' ? QUADRA_NAMES_RU : QUADRA_NAMES_EN;
+  const isHadamard = view === 'HADAMARD';
+
   return (
-    <div className="w-full border-b border-[var(--line)] flex items-center justify-center gap-6 md:gap-12 py-3 px-4 md:px-8 bg-[var(--bg)]/95 backdrop-blur-md z-50 shadow-sm overflow-x-auto no-scrollbar">
-      <div className="flex items-center gap-3 md:gap-4 shrink-0">
-        <div className="text-[10px] font-mono opacity-30 uppercase tracking-[0.2em]">{UI.model}</div>
-        <div className="flex border border-[var(--line)] p-1 bg-[var(--dim)]/30">
-          <button onClick={() => onChangeModel('PROJECTIVE')} className={`btn-tech border-none whitespace-nowrap min-h-[40px] px-6 ${modelType === 'PROJECTIVE' ? 'active' : ''}`}>{UI.projective}</button>
-          <button onClick={() => onChangeModel('CHURYUMOV')} className={`btn-tech border-none whitespace-nowrap min-h-[40px] px-6 ${modelType === 'CHURYUMOV' ? 'active' : ''}`}>{UI.churyumov}</button>
+    <div
+      className="relative z-50 flex items-center gap-3 md:gap-6 px-4 md:px-8 overflow-x-auto no-scrollbar"
+      style={{
+        height: 52,
+        borderBottom: '1px solid var(--hair)',
+        background: 'color-mix(in oklab, var(--bg) 75%, transparent)',
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
+      }}
+    >
+      {!isHadamard && (
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="eyebrow hidden sm:inline">{UI.model}</span>
+          <div className="seg">
+            <button
+              data-active={modelType === 'PROJECTIVE'}
+              onClick={() => onChangeModel('PROJECTIVE')}
+            >
+              {UI.projective}
+            </button>
+            <button
+              data-active={modelType === 'CHURYUMOV'}
+              onClick={() => onChangeModel('CHURYUMOV')}
+            >
+              {UI.churyumov}
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="flex items-center gap-3 shrink-0">
+        <span className="eyebrow hidden sm:inline">{UI.object}</span>
+        <div className="seg">
+          <button data-active={objectType === 'TIM'} onClick={() => onChangeObject('TIM')}>{UI.tims}</button>
+          <button data-active={objectType === 'ITR'} onClick={() => onChangeObject('ITR')}>{UI.itrs}</button>
+          <button data-active={objectType === 'RD'} onClick={() => onChangeObject('RD')}>{UI.arps}</button>
         </div>
       </div>
 
-      <div className="h-6 w-[1px] bg-[var(--line)] shrink-0" />
+      <div className="flex-1" />
 
-      <div className="flex items-center gap-3 md:gap-4 shrink-0">
-        <div className="text-[10px] font-mono opacity-30 uppercase tracking-[0.2em]">{UI.object}</div>
-        <div className="flex border border-[var(--line)] p-1 bg-[var(--dim)]/30">
-          <button onClick={() => onChangeObject('TIM')} className={`btn-tech border-none whitespace-nowrap min-h-[40px] px-6 ${objectType === 'TIM' ? 'active' : ''}`}>{UI.tims}</button>
-          <button onClick={() => onChangeObject('ITR')} className={`btn-tech border-none whitespace-nowrap min-h-[40px] px-6 ${objectType === 'ITR' ? 'active' : ''}`}>{UI.itrs}</button>
-          <button onClick={() => onChangeObject('RD')} className={`btn-tech border-none whitespace-nowrap min-h-[40px] px-6 ${objectType === 'RD' ? 'active' : ''}`}>{UI.arps}</button>
-        </div>
+      <div className="hidden md:flex items-center gap-5 shrink-0">
+        {quadraNames.map((name, i) => (
+          <span key={name} className="q-chip">
+            <span className="q-dot" style={{ background: QUADRA_COLORS[i] }} />
+            {name}
+          </span>
+        ))}
       </div>
     </div>
   );

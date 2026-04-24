@@ -20,89 +20,131 @@ export const TraitTooltip = React.memo(function TraitTooltip({
   hoveredTraitIdx,
   color,
 }: TraitTooltipProps) {
+  const kind =
+    objectType === 'TIM'
+      ? lang === 'RU' ? 'ТИМ' : 'TIM'
+      : objectType === 'ITR'
+        ? lang === 'RU' ? 'ИТО' : 'ITR'
+        : lang === 'RU' ? 'Признак' : 'Trait';
+
+  // Position tooltip relative to cursor, flipping if near edges
+  const flipX = mousePos.x > window.innerWidth * 0.6;
+  const flipY = mousePos.y > window.innerHeight * 0.55;
+  const offsetX = flipX ? '-108%' : '20px';
+  const offsetY = flipY ? '-108%' : '18px';
+
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0, y: 4, scale: 0.97 }}
       animate={{
         opacity: 1,
+        y: 0,
         scale: 1,
-        x: mousePos.x > window.innerWidth * 0.65 ? '-110%' : '25px',
-        y: mousePos.y > window.innerHeight * 0.6 ? '-110%' : '25px',
+        x: offsetX,
+        translateY: offsetY,
       }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      className="fractal-tooltip border-l-4"
+      exit={{ opacity: 0, scale: 0.97 }}
+      transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
+      className="infocard"
       style={{
         left: mousePos.x,
         top: mousePos.y,
-        borderLeftColor: color,
       }}
     >
-      <div className="flex flex-col gap-5">
-        {/* Header Section */}
-        <div>
-          <div className="text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-1 opacity-60">
-            {objectType === 'TIM'
-              ? lang === 'RU'
-                ? 'ТИМ'
-                : 'TIM'
-              : objectType === 'ITR'
-                ? lang === 'RU'
-                  ? 'ИТО'
-                  : 'ITR'
-                : lang === 'RU'
-                  ? 'ПРИЗНАК'
-                  : 'TRAIT'}
-          </div>
-          <h4 className="text-xl font-black title-italic leading-tight">
-            {activeTrait.subjectName}{' '}
-            <span className="text-accent uppercase">{activeTrait.poleName}</span>
-          </h4>
-        </div>
+      {/* Top row */}
+      <div className="flex items-center justify-between mb-3">
+        <span
+          className="mono"
+          style={{
+            fontSize: 10,
+            letterSpacing: '0.22em',
+            color: 'var(--ink-faint)',
+            textTransform: 'uppercase',
+            fontWeight: 500,
+          }}
+        >
+          {kind}
+        </span>
+        <span
+          className="mono"
+          style={{ fontSize: 10, letterSpacing: '0.18em', color: 'var(--ink-faint)' }}
+        >
+          {hoveredTraitIdx !== null ? String(hoveredTraitIdx + 1).padStart(2, '0') : '—'}
+          <span style={{ opacity: 0.4, margin: '0 6px' }}>/</span>
+          16
+        </span>
+      </div>
 
-        {/* Bulb & Equivalence */}
-        <div className="flex items-center gap-4 py-2 border-y border-ink/5">
-          <div className="relative">
-            <div
-              className={`w-6 h-6 rounded-full transition-all duration-500 border-2 ${
-                activeTrait.bit === 1 ? 'border-transparent' : 'border-ink/20 opacity-30 shadow-inner'
-              }`}
-              style={{
-                backgroundColor: activeTrait.bit === 1 ? color : 'transparent',
-                boxShadow:
-                  activeTrait.bit === 1
-                    ? `0 0 20px ${color}, 0 0 40px ${color}44`
-                    : 'none',
-              }}
-            />
-            {activeTrait.bit === 1 && (
-              <div
-                className="absolute inset-0 rounded-full animate-ping opacity-30"
-                style={{ backgroundColor: color }}
-              />
-            )}
-          </div>
-          <div className="text-[12px] font-bold">
-            {activeTrait.bit === 0 && (
-              <span className="text-accent underline decoration-2 underline-offset-4 mr-1">
-                {lang === 'RU' ? 'НЕ ' : 'NOT '}
-              </span>
-            )}
-            {lang === 'RU' ? 'Эквивалентно' : 'Equivalent to'} {activeTrait.equivalenceBase} ={' '}
-            {activeTrait.bit}
-          </div>
-        </div>
+      {/* Subject */}
+      <div
+        className="serif-italic"
+        style={{ fontSize: 22, lineHeight: 1.12, letterSpacing: '-0.015em', color: 'var(--ink)' }}
+      >
+        {activeTrait.subjectName}
+      </div>
+      <div
+        className="serif-italic"
+        style={{ fontSize: 14, lineHeight: 1.2, color: 'var(--ink-dim)', marginTop: 2 }}
+      >
+        — {activeTrait.poleName}
+      </div>
 
-        {/* Description Text */}
-        <div className="text-[13px] leading-relaxed text-ink/80 opacity-[0.95] min-h-[60px]">
-          {activeTrait.description}
-        </div>
+      {/* Bit row */}
+      <div
+        className="flex items-center gap-3"
+        style={{
+          margin: '14px 0',
+          padding: '11px 0',
+          borderTop: '1px solid var(--hair)',
+          borderBottom: '1px solid var(--hair)',
+        }}
+      >
+        <span
+          style={{
+            width: 10,
+            height: 10,
+            borderRadius: activeTrait.bit === 1 ? 2 : 999,
+            background: activeTrait.bit === 1 ? color : 'var(--ink-ghost)',
+            flexShrink: 0,
+          }}
+        />
+        <span style={{ fontSize: 12.5, color: 'var(--ink-dim)' }}>
+          {activeTrait.bit === 0 && (
+            <span style={{ color: 'var(--ink)', fontWeight: 600 }}>
+              {lang === 'RU' ? 'не ' : 'not '}
+            </span>
+          )}
+          {lang === 'RU' ? 'эквивалентно' : 'equivalent to'}{' '}
+          <span style={{ color: 'var(--ink)', fontWeight: 600 }}>
+            {activeTrait.equivalenceBase}
+          </span>
+        </span>
+      </div>
 
-        {/* Footer Meta (Semi-transparent) */}
-        <div className="mt-2 text-[10px] font-mono opacity-40 leading-tight border-t border-ink/5 pt-4">
-          BIT index = {hoveredTraitIdx !== null ? hoveredTraitIdx + 1 : '?'} ~{' '}
-          {activeTrait.correspondingTim.id} ~ {activeTrait.correspondingItr} ~{' '}
-          {activeTrait.correspondingRd}
-        </div>
+      {/* Description */}
+      <div style={{ fontSize: 12.5, lineHeight: 1.55, color: 'var(--ink-dim)' }}>
+        {activeTrait.description}
+      </div>
+
+      {/* Footer meta */}
+      <div
+        className="mono"
+        style={{
+          marginTop: 14,
+          paddingTop: 10,
+          borderTop: '1px solid var(--hair)',
+          fontSize: 9.5,
+          letterSpacing: '0.16em',
+          color: 'var(--ink-faint)',
+          textTransform: 'uppercase',
+          display: 'flex',
+          gap: 10,
+          flexWrap: 'wrap',
+        }}
+      >
+        <span>TIM · {activeTrait.correspondingTim.id}</span>
+        <span style={{ opacity: 0.4 }}>·</span>
+        <span style={{ textTransform: 'none' }}>{activeTrait.correspondingItr}</span>
       </div>
     </motion.div>
   );

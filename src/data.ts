@@ -216,8 +216,8 @@ export const QUADRA_NAMES_RU: string[] = ["Альфа", "Бета", "Гамма"
 export const QUADRA_NAMES_EN: string[] = ["Alpha", "Beta", "Gamma", "Delta"];
 
 export const QUADRA_COLORS: string[] = [
-  "#00F0FF", // Alpha (Blue/Light blue)
-  "#FF3131", // Beta (Red)
-  "#FFF000", // Gamma (Yellow)
-  "#39FF14"  // Delta (Green)
+  "#78BFC9", // Alpha — soft teal
+  "#D98A8C", // Beta  — dusty rose
+  "#CDA870", // Gamma — muted gold
+  "#8FB58E"  // Delta — sage
 ];

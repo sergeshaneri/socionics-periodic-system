@@ -4,27 +4,22 @@
  */
 
 import { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { 
-  TRAITS_EN, 
-  TRAITS_RU, 
-  POLES_EN, 
-  POLES_RU, 
-  TIMS_EN, 
-  TIMS_RU, 
-  ITR_EN, 
-  ITR_RU, 
-  HADAMARD_MATRIX, 
+import { AnimatePresence } from 'motion/react';
+import {
+  TRAITS_EN,
+  TRAITS_RU,
+  POLES_EN,
+  POLES_RU,
+  TIMS_EN,
+  TIMS_RU,
+  ITR_EN,
+  ITR_RU,
+  HADAMARD_MATRIX,
   QUADRA_COLORS,
   ABOUT_TEXT_RU,
-  ABOUT_TEXT_EN
+  ABOUT_TEXT_EN,
 } from './data';
-import type {
-  Lang,
-  ObjectType,
-  ModelType,
-  View,
-} from './types';
+import type { Lang, ObjectType, ModelType, View } from './types';
 import { UI_STRINGS } from './i18n/ui-strings';
 import { useHoverState } from './hooks/useHoverState';
 import { getTraitExplanation } from './utils/trait-explanation';
@@ -60,8 +55,7 @@ export default function App() {
   const currentObjects = useMemo(() => {
     if (objectType === 'TIM') return tims.map((t, idx) => ({ ...t, bits: HADAMARD_MATRIX[idx] }));
     if (objectType === 'ITR') return itrs.map((name, idx) => ({ id: name, name, bits: HADAMARD_MATRIX[idx], quadra: Math.floor(idx / 4) }));
-    
-    // RDs/Traits: show dual poles if not Existence
+
     const polesList = lang === 'RU' ? POLES_RU : POLES_EN;
     return traits.map((name, idx) => {
       let displayName = name;
@@ -93,11 +87,15 @@ export default function App() {
   const help = lang === 'RU' ? ABOUT_TEXT_RU : ABOUT_TEXT_EN;
 
   return (
-    <div className={`flex flex-col h-screen select-none ${!darkMode ? 'light' : ''}`} style={{ backgroundColor: 'var(--bg)', color: 'var(--ink)' }}>
-      {/* Background decoration */}
-      <div className="fixed inset-0 pointer-events-none opacity-40">
-        <div className="custom-grid-bg" />
-      </div>
+    <div
+      className={`h-screen w-screen grid select-none relative ${!darkMode ? 'light' : ''}`}
+      style={{
+        gridTemplateRows: '64px 52px 1fr',
+        backgroundColor: 'var(--bg)',
+        color: 'var(--ink)',
+      }}
+    >
+      <div className="aurora" />
 
       <Header
         UI={UI}
@@ -110,56 +108,60 @@ export default function App() {
         onChangeView={setView}
       />
 
+      <Toolbar
+        UI={UI}
+        lang={lang}
+        view={view}
+        modelType={modelType}
+        objectType={objectType}
+        onChangeModel={setModelType}
+        onChangeObject={setObjectType}
+      />
+
       <AboutModal show={showAbout} onClose={() => setShowAbout(false)} lang={lang} content={help} UI={UI} />
 
-      <main className="flex-1 flex flex-col min-h-0 bg-[var(--bg)] relative">
-        <Toolbar
-          UI={UI}
-          modelType={modelType}
-          objectType={objectType}
-          onChangeModel={setModelType}
-          onChangeObject={setObjectType}
-        />
-
-        <div className="flex-1 relative flex justify-center items-start overflow-auto p-12 md:p-16 lg:p-20 no-scrollbar pb-32">
-           {view === 'EXPLORE' ? (
-             <AnimatePresence mode="wait">
-                <motion.div 
-                  key={modelType}
-                  initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -10, scale: 1.02 }}
-                  className="w-full h-auto min-h-full flex flex-col items-center justify-start p-8 md:p-12"
-                >
-                   {modelType === 'PROJECTIVE' ? (
-                     <ProjectiveModel 
-                       currentObjects={currentObjects}
-                       lang={lang}
-                       UI={UI}
-                       hoveredIdx={hoveredIdx}
-                       setHoveredIdx={setHoveredIdx}
-                       hoveredTraitIdx={hoveredTraitIdx}
-                       setHoveredTraitIdx={setHoveredTraitIdx}
-                       setMousePos={setMousePos}
-                       objectType={objectType}
-                     />
-                   ) : (
-                     <ChuryumovModel 
-                       currentObjects={currentObjects}
-                       lang={lang}
-                       UI={UI}
-                       hoveredIdx={hoveredIdx}
-                       setHoveredIdx={setHoveredIdx}
-                       hoveredTraitIdx={hoveredTraitIdx}
-                       setHoveredTraitIdx={setHoveredTraitIdx}
-                       setMousePos={setMousePos}
-                       objectType={objectType}
-                     />
-                   )}
-                </motion.div>
-             </AnimatePresence>
-           ) : <HadamardView UI={UI} lang={lang} traits={traits} tims={objectType === 'TIM' ? (lang === 'RU' ? TIMS_RU : TIMS_EN) : currentObjects} itrs={itrs} />}
-        </div>
+      <main className="relative min-h-0 overflow-hidden">
+        {view === 'EXPLORE' ? (
+          <div className="absolute inset-0 grid place-items-center p-2 sm:p-4">
+            {modelType === 'PROJECTIVE' ? (
+              <ProjectiveModel
+                key="projective"
+                currentObjects={currentObjects}
+                lang={lang}
+                UI={UI}
+                hoveredIdx={hoveredIdx}
+                setHoveredIdx={setHoveredIdx}
+                hoveredTraitIdx={hoveredTraitIdx}
+                setHoveredTraitIdx={setHoveredTraitIdx}
+                setMousePos={setMousePos}
+                objectType={objectType}
+              />
+            ) : (
+              <ChuryumovModel
+                key="churyumov"
+                currentObjects={currentObjects}
+                lang={lang}
+                UI={UI}
+                hoveredIdx={hoveredIdx}
+                setHoveredIdx={setHoveredIdx}
+                hoveredTraitIdx={hoveredTraitIdx}
+                setHoveredTraitIdx={setHoveredTraitIdx}
+                setMousePos={setMousePos}
+                objectType={objectType}
+              />
+            )}
+          </div>
+        ) : (
+          <div className="absolute inset-0">
+            <HadamardView
+              UI={UI}
+              lang={lang}
+              traits={traits}
+              tims={objectType === 'TIM' ? (lang === 'RU' ? TIMS_RU : TIMS_EN) : currentObjects}
+              itrs={itrs}
+            />
+          </div>
+        )}
       </main>
 
       <AnimatePresence>
@@ -177,4 +179,3 @@ export default function App() {
     </div>
   );
 }
-

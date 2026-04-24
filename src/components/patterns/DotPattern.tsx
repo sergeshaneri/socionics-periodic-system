@@ -28,14 +28,12 @@ export const DotPattern = React.memo(function DotPattern({
   setHoveredTraitIdx,
   setHoveredIdx,
   setMousePos,
-  lang,
   label,
   objectType,
 }: DotPatternProps) {
   const color = QUADRA_COLORS[quadraIdx];
   const isChuryumov = modelType === 'CHURYUMOV';
   const isTIM = objectType === 'TIM';
-  const isITR = objectType === 'ITR';
   const isRD = objectType === 'RD';
 
   const handleMouseMoveGrid = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -68,101 +66,162 @@ export const DotPattern = React.memo(function DotPattern({
     }
   };
 
+  const cellNumber = String(itemIdx + 1).padStart(2, '0');
+
+  // Churyumov-only label content
+  const labelContent =
+    isRD && label.includes('/')
+      ? label.split('/').map((part, i) => (
+          <div key={i}>
+            {part.trim()}
+            {i === 0 ? ' /' : ''}
+          </div>
+        ))
+      : label;
+
+  const labelFontSize = isTIM
+    ? 'clamp(11px, 22cqi, 26px)'
+    : 'clamp(6.5px, 10cqi, 12px)';
+
   if (isChuryumov) {
     return (
       <div
-        className="grid grid-cols-6 grid-rows-6 gap-[2px] w-full aspect-square bg-black/90 p-[2px] relative border border-white/20 select-none cursor-crosshair"
+        className="relative w-full h-full select-none cursor-crosshair"
         onMouseMove={handleMouseMoveGrid}
         onMouseLeave={() => {
           setHoveredTraitIdx(null);
           setHoveredIdx(null);
         }}
+        style={{ containerType: 'size' } as React.CSSProperties}
       >
-        {Array.from({ length: 36 }).map((_, i) => {
-          const r = Math.floor(i / 6);
-          const c = i % 6;
-          const bitIdx = CHURYUMOV_P16.findIndex((p) => p[0] === r && p[1] === c);
-          const bit = bitIdx !== -1 ? bits[bitIdx] : null;
-          const isCellHovered = hoveredTraitIdx === bitIdx && hoveredIdx === itemIdx;
+        <div
+          className="grid grid-cols-6 grid-rows-6 absolute inset-0"
+          style={{ gap: 1, padding: 3 }}
+        >
+          {Array.from({ length: 36 }).map((_, i) => {
+            const r = Math.floor(i / 6);
+            const c = i % 6;
+            const bitIdx = CHURYUMOV_P16.findIndex((p) => p[0] === r && p[1] === c);
+            const bit = bitIdx !== -1 ? bits[bitIdx] : null;
+            const isCellHovered = hoveredTraitIdx === bitIdx && hoveredIdx === itemIdx;
+            const filled = bit === 1;
+            const empty = bitIdx === -1;
 
-          return (
-            <div
-              key={i}
-              className={`transition-all duration-300 relative ${bitIdx === -1 ? 'opacity-0' : ''}`}
-              style={{
-                backgroundColor: bit === 1 ? color : bitIdx !== -1 ? 'rgba(40, 40, 40, 0.8)' : 'transparent',
-                border: bitIdx !== -1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                borderColor: isCellHovered ? 'var(--ink)' : 'rgba(255,255,255,0.05)',
-                transform: isCellHovered ? 'scale(1.1)' : 'scale(1)',
-                zIndex: isCellHovered ? 10 : 1,
-                boxShadow: bit === 1 && isCellHovered ? `0 0 15px ${color}` : 'none',
-              }}
-            />
-          );
-        })}
-        {/* Internal Label */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] h-[85%] pointer-events-none flex items-center justify-center overflow-hidden [container-type:size]">
+            return (
+              <div
+                key={i}
+                style={{
+                  backgroundColor: empty
+                    ? 'transparent'
+                    : filled
+                      ? color
+                      : 'var(--dot-empty)',
+                  border: empty ? 'none' : '1px solid var(--dot-border)',
+                  borderColor: isCellHovered ? 'var(--dot-border-hi)' : empty ? 'transparent' : 'var(--dot-border)',
+                  transform: isCellHovered ? 'scale(1.06)' : 'scale(1)',
+                  zIndex: isCellHovered ? 10 : 1,
+                  borderRadius: 2,
+                  transition: 'transform 180ms cubic-bezier(0.23, 1, 0.32, 1), border-color 180ms cubic-bezier(0.23, 1, 0.32, 1)',
+                  opacity: empty ? 0 : 1,
+                }}
+              />
+            );
+          })}
+        </div>
+
+        {/* Corner index (top-left) */}
+        <span
+          className="mono absolute pointer-events-none"
+          style={{
+            top: 'clamp(3px, 3cqi, 6px)',
+            left: 'clamp(4px, 4cqi, 7px)',
+            fontSize: 'clamp(6.5px, 7cqi, 9px)',
+            letterSpacing: '0.1em',
+            color: 'var(--corner-color)',
+            fontWeight: 600,
+            textShadow: 'var(--corner-shadow)',
+          }}
+        >
+          {cellNumber}
+        </span>
+
+        {/* Label overlay (centered in empty middle of mini-perimeter) */}
+        <div
+          className="absolute pointer-events-none flex items-center justify-center text-center"
+          style={{ top: '22%', left: '22%', right: '22%', bottom: '22%' }}
+        >
           <div
-            className="font-black text-center uppercase text-white/90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] w-full tracking-tight"
             style={{
-              fontSize: isTIM
-                ? 'clamp(14px, 18cqi, 32px)' // ТИМы - крупный шрифт
-                : 'clamp(9px, 10cqi, 16px)', // Всё остальное - единый размер с переносом
-              lineHeight: isTIM ? '1.05' : '1.15',
+              fontFamily: 'var(--font-sans)',
+              fontWeight: isTIM ? 800 : 700,
+              letterSpacing: isTIM ? '0.03em' : '0.01em',
+              textTransform: 'uppercase',
+              color: 'var(--label-color)',
+              fontSize: labelFontSize,
+              lineHeight: isTIM ? '1' : '1.1',
               wordBreak: isTIM ? 'normal' : 'break-word',
-              overflowWrap: 'break-word',
+              overflowWrap: 'anywhere',
+              width: '100%',
+              textShadow: 'var(--label-shadow)',
             }}
           >
-            {isRD && label.includes('/') ? (
-              // Признаки Рейнина - разбиваем по /
-              label.split('/').map((part, i) => (
-                <div key={i} style={{ lineHeight: '1.15' }}>
-                  {part.trim()}
-                  {i === 0 ? '/' : ''}
-                </div>
-              ))
-            ) : isITR && label.includes(' ') ? (
-              // Отношения с пробелами - разбиваем на строки
-              label.split(' ').map((word, i) => (
-                <div key={i} style={{ lineHeight: '1.15' }}>
-                  {word}
-                </div>
-              ))
-            ) : (
-              // ТИМы и короткие названия - одной строкой
-              label
-            )}
+            {labelContent}
           </div>
         </div>
       </div>
     );
   }
 
+  // Projective 4x4 — just pattern + corner index + quadra dot. Label is rendered externally below the cell.
   return (
     <div
-      className="grid grid-cols-4 gap-[4px] w-full aspect-square bg-black/90 p-[4px] relative border border-white/20 select-none cursor-crosshair"
+      className="relative w-full h-full select-none cursor-crosshair"
       onMouseMove={handleMouseMoveGrid}
       onMouseLeave={() => {
         setHoveredTraitIdx(null);
         setHoveredIdx(null);
       }}
+      style={{ containerType: 'size' } as React.CSSProperties}
     >
-      {bits.map((bit, idx) => {
-        const isCellHovered = hoveredTraitIdx === idx && hoveredIdx === itemIdx;
-        return (
-          <div
-            key={idx}
-            className="transition-all duration-300 border border-white/5"
-            style={{
-              backgroundColor: bit === 1 ? color : 'rgba(40, 40, 50, 0.95)',
-              borderColor: isCellHovered ? 'var(--ink)' : 'rgba(255,255,255,0.3)',
-              transform: isCellHovered ? 'scale(1.15)' : 'scale(1)',
-              zIndex: isCellHovered ? 10 : 1,
-              boxShadow: bit === 1 && isCellHovered ? `0 0 15px ${color}` : 'none',
-            }}
-          />
-        );
-      })}
+      <div
+        className="grid grid-cols-4 grid-rows-4 absolute inset-0"
+        style={{ gap: 3, padding: 5 }}
+      >
+        {bits.map((bit, idx) => {
+          const isCellHovered = hoveredTraitIdx === idx && hoveredIdx === itemIdx;
+          const filled = bit === 1;
+          return (
+            <div
+              key={idx}
+              style={{
+                backgroundColor: filled ? color : 'var(--dot-empty)',
+                border: '1px solid var(--dot-border)',
+                borderColor: isCellHovered ? 'var(--dot-border-hi)' : 'var(--dot-border)',
+                transform: isCellHovered ? 'scale(1.08)' : 'scale(1)',
+                zIndex: isCellHovered ? 10 : 1,
+                borderRadius: 3,
+                transition: 'transform 180ms cubic-bezier(0.23, 1, 0.32, 1), border-color 180ms cubic-bezier(0.23, 1, 0.32, 1)',
+              }}
+            />
+          );
+        })}
+      </div>
+
+      {/* Corner index */}
+      <span
+        className="mono absolute pointer-events-none"
+        style={{
+          top: 'clamp(4px, 3.5cqi, 8px)',
+          left: 'clamp(5px, 4cqi, 9px)',
+          fontSize: 'clamp(7px, 6.5cqi, 10px)',
+          letterSpacing: '0.1em',
+          color: 'rgba(255,255,255,0.55)',
+          fontWeight: 600,
+          textShadow: '0 1px 2px rgba(0,0,0,0.6)',
+        }}
+      >
+        {cellNumber}
+      </span>
     </div>
   );
 });

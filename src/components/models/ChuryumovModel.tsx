@@ -4,10 +4,10 @@ import type { ModelProps } from '../../types';
 import { DotPattern } from '../patterns/DotPattern';
 
 const POSITIONS: ReadonlyArray<{ top: string; left: string }> = [
-  { top: '10%', left: '25%' }, { top: '10%', left: '42%' }, { top: '10%', left: '58%' }, { top: '10%', left: '75%' },
-  { top: '25%', left: '90%' }, { top: '42%', left: '90%' }, { top: '58%', left: '90%' }, { top: '75%', left: '90%' },
-  { top: '90%', left: '75%' }, { top: '90%', left: '58%' }, { top: '90%', left: '42%' }, { top: '90%', left: '25%' },
-  { top: '75%', left: '10%' }, { top: '58%', left: '10%' }, { top: '42%', left: '10%' }, { top: '25%', left: '10%' },
+  { top: '14%', left: '26%' }, { top: '14%', left: '42%' }, { top: '14%', left: '58%' }, { top: '14%', left: '74%' },
+  { top: '26%', left: '86%' }, { top: '42%', left: '86%' }, { top: '58%', left: '86%' }, { top: '74%', left: '86%' },
+  { top: '86%', left: '74%' }, { top: '86%', left: '58%' }, { top: '86%', left: '42%' }, { top: '86%', left: '26%' },
+  { top: '74%', left: '14%' }, { top: '58%', left: '14%' }, { top: '42%', left: '14%' }, { top: '26%', left: '14%' },
 ];
 
 export const ChuryumovModel = React.memo(function ChuryumovModel({
@@ -21,43 +21,60 @@ export const ChuryumovModel = React.memo(function ChuryumovModel({
   objectType,
 }: ModelProps) {
   return (
-    <div className="relative w-full aspect-square max-w-[800px] flex items-center justify-center bg-[var(--bg)] border border-[var(--line)] shadow-2xl rounded-sm my-12">
-      <div className="absolute inset-[26%] bg-[var(--dim)]/40 border border-[var(--line)] flex flex-col items-center justify-center z-0 overflow-hidden rounded-sm backdrop-blur-md">
-         <div className="absolute inset-0 opacity-10 pointer-events-none custom-grid-bg" />
+    <div
+      className="shell"
+      data-model="churyumov"
+      style={{
+        width: 'min(calc(100vh - 140px), calc(100vw - 20px), 820px)',
+        aspectRatio: '1 / 1',
+      }}
+    >
+      <div className="core w-full h-full relative">
+        {currentObjects.map((obj, idx) => {
+          const isHover = hoveredIdx === idx;
+          return (
+            <div
+              key={obj.id}
+              className="absolute"
+              style={{
+                top: POSITIONS[idx].top,
+                left: POSITIONS[idx].left,
+                width: 'clamp(82px, 14.5vmin, 130px)',
+                aspectRatio: '1 / 1',
+                transform: 'translate(-50%, -50%)',
+              }}
+              onMouseEnter={() => setHoveredIdx(idx)}
+              onMouseLeave={() => setHoveredIdx(null)}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.94 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.32, delay: idx * 0.012, ease: [0.23, 1, 0.32, 1] }}
+                className="cell-shell relative w-full h-full"
+                data-hover={isHover}
+                style={{ padding: 0 }}
+              >
+                <div className="cell-core absolute" style={{ top: 4, left: 4, right: 4, bottom: 4 }}>
+                  <DotPattern
+                    bits={obj.bits}
+                    quadraIdx={obj.quadra}
+                    itemIdx={idx}
+                    modelType="CHURYUMOV"
+                    hoveredIdx={hoveredIdx}
+                    hoveredTraitIdx={hoveredTraitIdx}
+                    setHoveredTraitIdx={setHoveredTraitIdx}
+                    setHoveredIdx={setHoveredIdx}
+                    setMousePos={setMousePos}
+                    lang={lang}
+                    label={obj.id}
+                    objectType={objectType}
+                  />
+                </div>
+              </motion.div>
+            </div>
+          );
+        })}
       </div>
-
-      {currentObjects.map((obj, idx) => (
-        <motion.div
-          key={obj.id}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className={`absolute w-[15%] p-1.5 rounded-sm border transition-all cursor-pointer group bg-[var(--bg)]/10 ${
-            hoveredIdx === idx ? 'border-accent bg-accent/20 z-20 shadow-xl scale-110' : 'border-transparent z-10'
-          }`}
-          style={{ 
-            top: POSITIONS[idx].top, 
-            left: POSITIONS[idx].left,
-            transform: 'translate(-50%, -50%)',
-          }}
-          onMouseEnter={() => setHoveredIdx(idx)}
-          onMouseLeave={() => setHoveredIdx(null)}
-        >
-          <DotPattern 
-            bits={obj.bits} 
-            quadraIdx={obj.quadra} 
-            itemIdx={idx} 
-            modelType="CHURYUMOV"
-            hoveredIdx={hoveredIdx}
-            hoveredTraitIdx={hoveredTraitIdx}
-            setHoveredTraitIdx={setHoveredTraitIdx}
-            setHoveredIdx={setHoveredIdx}
-            setMousePos={setMousePos}
-            lang={lang}
-            label={obj.id}
-            objectType={objectType}
-          />
-        </motion.div>
-      ))}
     </div>
   );
 });

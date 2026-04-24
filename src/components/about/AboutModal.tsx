@@ -12,129 +12,193 @@ export interface AboutModalProps {
 }
 
 export function AboutModal({ show, onClose, lang, UI, content }: AboutModalProps) {
-  if (!show) return null;
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] bg-[var(--bg)]/95 backdrop-blur-3xl flex items-center justify-center p-8 md:p-16"
-        onClick={onClose}
-      >
+      {show && (
         <motion.div
-          initial={{ scale: 0.98, y: 40 }}
-          animate={{ scale: 1, y: 0 }}
-          className="bg-[var(--bg)] border border-[var(--line)] w-full max-w-6xl h-full flex flex-col shadow-2xl relative overflow-hidden"
-          onClick={(e) => e.stopPropagation()}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.22 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8"
+          style={{
+            background: 'color-mix(in oklab, var(--bg) 82%, transparent)',
+            backdropFilter: 'blur(20px)',
+          }}
+          onClick={onClose}
         >
-          <div className="px-12 py-10 border-b border-[var(--line)] flex justify-between items-center bg-[var(--dim)]/20">
-            <div>
-              <h2 className="text-4xl font-black title-italic uppercase tracking-tighter">{UI.about}</h2>
-              <div className="text-[10px] opacity-30 uppercase font-mono tracking-[0.4em] mt-2">H16 Fractal Manual / Extensive Characteristics</div>
+          <motion.div
+            initial={{ scale: 0.98, y: 12, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            exit={{ scale: 0.98, y: 12, opacity: 0 }}
+            transition={{ duration: 0.24, ease: [0.22, 0.61, 0.36, 1] }}
+            className="flex flex-col relative overflow-hidden"
+            style={{
+              background: 'var(--bg-elev)',
+              border: '1px solid var(--hair)',
+              borderRadius: 18,
+              width: '100%',
+              maxWidth: 1040,
+              height: 'min(92vh, 820px)',
+              boxShadow:
+                '0 30px 80px -30px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.25)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div
+              className="flex items-center justify-between gap-6 px-8 md:px-12"
+              style={{
+                height: 84,
+                borderBottom: '1px solid var(--hair)',
+                flexShrink: 0,
+              }}
+            >
+              <div>
+                <div className="eyebrow">H16 · Fractal Manual</div>
+                <h2
+                  className="serif-italic leading-none"
+                  style={{ fontSize: 32, marginTop: 4, letterSpacing: '-0.01em' }}
+                >
+                  {UI.about}
+                </h2>
+              </div>
+              <button
+                onClick={onClose}
+                className="icon-btn"
+                aria-label="close"
+                style={{ width: 40, height: 40 }}
+              >
+                <X size={16} />
+              </button>
             </div>
-            <button onClick={onClose} className="w-12 h-12 border border-[var(--line)] flex items-center justify-center hover:bg-accent hover:text-bg transition-all transform hover:rotate-90">
-              <X size={20} />
-            </button>
-          </div>
 
-          <div className="flex-1 overflow-y-auto p-12 md:p-20 space-y-20 scroll-smooth">
-             <section className="p-10 bg-accent/10 border-2 border-accent/30 rounded-sm relative overflow-hidden backdrop-blur-md">
-                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-                  <div className="text-8xl font-black italic uppercase">Origin</div>
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto px-8 md:px-12 py-10">
+              {/* Origin */}
+              <section
+                className="mb-12 p-8 rounded-xl"
+                style={{
+                  background: 'color-mix(in oklab, var(--accent) 8%, transparent)',
+                  border: '1px solid color-mix(in oklab, var(--accent) 25%, transparent)',
+                }}
+              >
+                <div className="eyebrow" style={{ color: 'var(--accent)' }}>
+                  {lang === 'RU' ? 'Начало координат' : 'Origin'}
                 </div>
-                <div className="relative z-10 flex items-center gap-6">
-                   <div className="h-16 w-[4px] bg-accent" />
-                   <div>
-                      <h3 className="text-xl md:text-2xl font-black title-italic uppercase tracking-tighter text-accent mb-2">
-                        {lang === 'RU' ? 'ИЛЭ — Единица Системы' : 'ILE — System Unit'}
-                      </h3>
-                      <p className="text-[15px] leading-relaxed max-w-2xl font-bold italic-serif">
-                        {lang === 'RU'
-                          ? 'ТИМ ИЛЭ ("Дон Кихот") принят за начало координат. Любой паттерн показывает степень соответствия объекта базису ИЛЭ. Положительные ячейки (1) означают совпадение полюса признака с ИЛЭ, серые (0) — различие.'
-                          : 'ILE ("Don Quixote") is adopted as the system origin. Patterns show the degree of correspondence to the ILE basis. Plus cells (1) mean trait pole coincidence with ILE, gray (0) means difference.'}
-                      </p>
-                   </div>
-                </div>
-             </section>
+                <h3
+                  className="serif-italic"
+                  style={{
+                    fontSize: 24,
+                    lineHeight: 1.2,
+                    marginTop: 6,
+                    marginBottom: 10,
+                  }}
+                >
+                  {lang === 'RU' ? 'ИЛЭ — единица системы' : 'ILE — system unit'}
+                </h3>
+                <p style={{ fontSize: 14.5, lineHeight: 1.65, color: 'var(--ink-dim)' }}>
+                  {lang === 'RU'
+                    ? 'ТИМ ИЛЭ («Дон Кихот») принят за начало координат. Любой паттерн показывает степень соответствия объекта базису ИЛЭ. Ячейки «1» означают совпадение полюса признака с ИЛЭ, «0» — различие.'
+                    : 'The ILE TIM ("Don Quixote") is adopted as the system origin. Each pattern shows the degree of correspondence to the ILE basis. Cells of "1" mean the trait pole coincides with ILE, "0" means difference.'}
+                </p>
+              </section>
 
-             <div className="grid md:grid-cols-2 gap-20">
-                <div className="space-y-12">
-                   <section className="space-y-4">
-                      <div className="flex items-center gap-4">
-                         <div className="h-[2px] w-8 bg-accent" />
-                         <h3 className="text-xs font-black uppercase tracking-[0.3em] text-accent">{lang === 'RU' ? 'ОСНОВЫ' : 'FOUNDATIONS'}</h3>
-                      </div>
-                      <p className="text-[15px] leading-relaxed opacity-80">{content.intro}</p>
-                   </section>
-                   <section className="space-y-4">
-                      <div className="flex items-center gap-4">
-                         <div className="h-[2px] w-8 bg-accent" />
-                         <h3 className="text-xs font-black uppercase tracking-[0.3em] text-accent">{lang === 'RU' ? 'МАТЕМАТИКА' : 'MATHEMATICS'}</h3>
-                      </div>
-                      <p className="text-[15px] leading-relaxed opacity-80">{content.hadamard}</p>
-                   </section>
-                   <section className="space-y-4">
-                      <div className="flex items-center gap-4">
-                         <div className="h-[2px] w-8 bg-accent" />
-                         <h3 className="text-xs font-black uppercase tracking-[0.3em] text-accent">{lang === 'RU' ? 'ФРАКТАЛЬНОСТЬ' : 'FRACTALITY'}</h3>
-                      </div>
-                      <p className="text-[15px] leading-relaxed opacity-80">{content.fractality}</p>
-                   </section>
-                </div>
-                <div className="space-y-12">
-                   <section className="space-y-4">
-                      <div className="flex items-center gap-4">
-                         <div className="h-[2px] w-8 bg-accent" />
-                         <h3 className="text-xs font-black uppercase tracking-[0.3em] text-accent">{lang === 'RU' ? 'МОДЕЛИ' : 'MODELS'}</h3>
-                      </div>
-                      <p className="text-[15px] leading-relaxed opacity-80">{content.models}</p>
-                   </section>
-                   <section className="space-y-4">
-                      <div className="flex items-center gap-4">
-                         <div className="h-[2px] w-8 bg-accent" />
-                         <h3 className="text-xs font-black uppercase tracking-[0.3em] text-accent">{lang === 'RU' ? 'СЕМАНТИКА' : 'SEMANTICS'}</h3>
-                      </div>
-                      <p className="text-[15px] leading-relaxed opacity-80">{content.semantics}</p>
-                   </section>
-                   <section className="p-10 bg-accent/5 border border-accent/20 rounded-sm">
-                      <h4 className="text-[11px] font-black uppercase mb-4 tracking-[0.2em]">{lang === 'RU' ? 'ЭКСТЕНСИВНЫЕ ХАРАКТЕРИСТИКИ' : 'EXTENSIVE CHARACTERISTICS'}</h4>
-                      <p className="text-[14px] leading-relaxed opacity-80 italic italic-serif">{content.detailed}</p>
-                   </section>
-                </div>
-             </div>
+              {/* Two columns */}
+              <div className="grid md:grid-cols-2 gap-x-12 gap-y-10 mb-12">
+                {[
+                  { eyebrow: lang === 'RU' ? 'Основы' : 'Foundations', body: content.intro },
+                  { eyebrow: lang === 'RU' ? 'Математика' : 'Mathematics', body: content.hadamard },
+                  { eyebrow: lang === 'RU' ? 'Фрактальность' : 'Fractality', body: content.fractality },
+                  { eyebrow: lang === 'RU' ? 'Модели' : 'Models', body: content.models },
+                  { eyebrow: lang === 'RU' ? 'Семантика' : 'Semantics', body: content.semantics },
+                  { eyebrow: lang === 'RU' ? 'Экстенсивные характеристики' : 'Extensive', body: content.detailed },
+                ].map((s, i) => (
+                  <section key={i}>
+                    <div className="eyebrow mb-2">{s.eyebrow}</div>
+                    <p
+                      style={{
+                        fontSize: 14,
+                        lineHeight: 1.65,
+                        color: 'var(--ink-dim)',
+                      }}
+                    >
+                      {s.body}
+                    </p>
+                  </section>
+                ))}
+              </div>
 
-             <section className="pt-20 border-t border-[var(--line)]">
-                <div className="flex flex-col items-center mb-12">
-                   <h3 className="text-xs font-black uppercase text-accent tracking-[0.5em] mb-4">HADAMARD_CORE_VISUALIZATION (H16)</h3>
-                   <div className="w-16 h-[2px] bg-accent opacity-30" />
+              {/* Hadamard mini */}
+              <section>
+                <div
+                  className="flex items-center justify-between mb-5"
+                  style={{ paddingTop: 24, borderTop: '1px solid var(--hair)' }}
+                >
+                  <div>
+                    <div className="eyebrow">H16 Visualization</div>
+                    <h4
+                      className="serif-italic"
+                      style={{ fontSize: 20, marginTop: 2 }}
+                    >
+                      {lang === 'RU' ? 'Матрица Адамара' : 'Hadamard Matrix'}
+                    </h4>
+                  </div>
+                  <div className="mono" style={{ fontSize: 10, color: 'var(--ink-faint)', letterSpacing: '0.18em' }}>
+                    16 × 16
+                  </div>
                 </div>
-                <div className="max-w-4xl mx-auto border border-[var(--line)] p-1 bg-black/40">
-                   <div className="grid border-t border-l border-[var(--line)]" style={{ gridTemplateColumns: 'repeat(16, minmax(0, 1fr))' }}>
-                      {HADAMARD_MATRIX.flatMap((row, ri) =>
-                        row.map((val, ci) => {
-                          const isBenchmark = ri === 0;
-                          return (
-                            <div
-                              key={`${ri}-${ci}`}
-                              className={`aspect-square flex items-center justify-center text-[7px] border-r border-b border-[var(--line)] font-mono transition-all hover:bg-accent/40 cursor-help ${val === 1 ? 'text-accent font-black' : 'opacity-20'} ${isBenchmark ? 'bg-accent/10 outline outline-1 outline-accent/40 outline-offset-[-2px]' : ''}`}
-                            >
-                               {val}
-                            </div>
-                          );
-                        })
-                      )}
-                   </div>
+                <div
+                  className="mx-auto"
+                  style={{
+                    maxWidth: 520,
+                    border: '1px solid var(--hair)',
+                    borderRadius: 8,
+                    padding: 4,
+                  }}
+                >
+                  <div
+                    className="grid"
+                    style={{ gridTemplateColumns: 'repeat(16, minmax(0, 1fr))', gap: 2 }}
+                  >
+                    {HADAMARD_MATRIX.flatMap((row, ri) =>
+                      row.map((val, ci) => (
+                        <div
+                          key={`${ri}-${ci}`}
+                          className="aspect-square"
+                          style={{
+                            background: val === 1 ? 'var(--ink)' : 'var(--ink-ghost)',
+                            borderRadius: 2,
+                            opacity: val === 1 ? 0.9 : 1,
+                          }}
+                          title={`${ri}:${ci}=${val}`}
+                        />
+                      ))
+                    )}
+                  </div>
                 </div>
-             </section>
-          </div>
+              </section>
+            </div>
 
-          <div className="px-12 py-8 border-t border-[var(--line)] bg-[var(--dim)]/30 flex justify-between items-center text-[10px] font-mono opacity-30 uppercase tracking-[0.2em]">
-             <span>© SOCIONICS_FRACTAL_PROJECT v1.2</span>
-             <span>SYMMETRICAL_HADAMARD_ENGINE_READY</span>
-          </div>
+            {/* Footer */}
+            <div
+              className="flex items-center justify-between px-8 md:px-12 mono"
+              style={{
+                height: 48,
+                borderTop: '1px solid var(--hair)',
+                fontSize: 10,
+                letterSpacing: '0.18em',
+                color: 'var(--ink-faint)',
+                textTransform: 'uppercase',
+                flexShrink: 0,
+              }}
+            >
+              <span>© Socionics Fractal Project</span>
+              <span>Hadamard engine · ready</span>
+            </div>
+          </motion.div>
         </motion.div>
-      </motion.div>
+      )}
     </AnimatePresence>
   );
 }
