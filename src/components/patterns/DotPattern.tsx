@@ -1,6 +1,5 @@
 import React from 'react';
 import type { Lang, ModelType, ObjectType } from '../../types';
-import { QUADRA_COLORS } from '../../data';
 import { CHURYUMOV_P16 } from '../../constants/churyumov';
 
 export interface DotPatternProps {
@@ -31,7 +30,8 @@ export const DotPattern = React.memo(function DotPattern({
   label,
   objectType,
 }: DotPatternProps) {
-  const color = QUADRA_COLORS[quadraIdx];
+  // Use CSS var for fill color so light/dark themes can override saturation.
+  const fillColor = `var(--q-${quadraIdx})`;
   const isChuryumov = modelType === 'CHURYUMOV';
   const isTIM = objectType === 'TIM';
   const isRD = objectType === 'RD';
@@ -96,7 +96,7 @@ export const DotPattern = React.memo(function DotPattern({
       >
         <div
           className="grid grid-cols-6 grid-rows-6 absolute inset-0"
-          style={{ gap: 1, padding: 3 }}
+          style={{ gap: 2, padding: 4 }}
         >
           {Array.from({ length: 36 }).map((_, i) => {
             const r = Math.floor(i / 6);
@@ -114,14 +114,15 @@ export const DotPattern = React.memo(function DotPattern({
                   backgroundColor: empty
                     ? 'transparent'
                     : filled
-                      ? color
+                      ? fillColor
                       : 'var(--dot-empty)',
                   border: empty ? 'none' : '1px solid var(--dot-border)',
                   borderColor: isCellHovered ? 'var(--dot-border-hi)' : empty ? 'transparent' : 'var(--dot-border)',
                   transform: isCellHovered ? 'scale(1.06)' : 'scale(1)',
                   zIndex: isCellHovered ? 10 : 1,
                   borderRadius: 2,
-                  transition: 'transform 180ms cubic-bezier(0.23, 1, 0.32, 1), border-color 180ms cubic-bezier(0.23, 1, 0.32, 1)',
+                  boxShadow: filled ? 'var(--dot-filled-inset)' : 'none',
+                  transition: 'transform 180ms cubic-bezier(0.23, 1, 0.32, 1), border-color 180ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1)',
                   opacity: empty ? 0 : 1,
                 }}
               />
@@ -194,13 +195,14 @@ export const DotPattern = React.memo(function DotPattern({
             <div
               key={idx}
               style={{
-                backgroundColor: filled ? color : 'var(--dot-empty)',
+                backgroundColor: filled ? fillColor : 'var(--dot-empty)',
                 border: '1px solid var(--dot-border)',
                 borderColor: isCellHovered ? 'var(--dot-border-hi)' : 'var(--dot-border)',
                 transform: isCellHovered ? 'scale(1.08)' : 'scale(1)',
                 zIndex: isCellHovered ? 10 : 1,
                 borderRadius: 3,
-                transition: 'transform 180ms cubic-bezier(0.23, 1, 0.32, 1), border-color 180ms cubic-bezier(0.23, 1, 0.32, 1)',
+                boxShadow: filled ? 'var(--dot-filled-inset)' : 'none',
+                transition: 'transform 180ms cubic-bezier(0.23, 1, 0.32, 1), border-color 180ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1)',
               }}
             />
           );

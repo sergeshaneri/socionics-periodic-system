@@ -3,11 +3,16 @@ import { motion } from 'motion/react';
 import type { ModelProps } from '../../types';
 import { DotPattern } from '../patterns/DotPattern';
 
+/**
+ * 4 cards per SIDE — each side carries a single quadra (Alpha=top, Beta=right,
+ * Gamma=bottom, Delta=left). Corners are deliberately empty so the quadra-per-edge
+ * structure stays legible.
+ */
 const POSITIONS: ReadonlyArray<{ top: string; left: string }> = [
-  { top: '14%', left: '26%' }, { top: '14%', left: '42%' }, { top: '14%', left: '58%' }, { top: '14%', left: '74%' },
-  { top: '26%', left: '86%' }, { top: '42%', left: '86%' }, { top: '58%', left: '86%' }, { top: '74%', left: '86%' },
-  { top: '86%', left: '74%' }, { top: '86%', left: '58%' }, { top: '86%', left: '42%' }, { top: '86%', left: '26%' },
-  { top: '74%', left: '14%' }, { top: '58%', left: '14%' }, { top: '42%', left: '14%' }, { top: '26%', left: '14%' },
+  { top: '8%',  left: '24%' }, { top: '8%',  left: '41%' }, { top: '8%',  left: '59%' }, { top: '8%',  left: '76%' },
+  { top: '24%', left: '92%' }, { top: '41%', left: '92%' }, { top: '59%', left: '92%' }, { top: '76%', left: '92%' },
+  { top: '92%', left: '76%' }, { top: '92%', left: '59%' }, { top: '92%', left: '41%' }, { top: '92%', left: '24%' },
+  { top: '76%', left: '8%'  }, { top: '59%', left: '8%'  }, { top: '41%', left: '8%'  }, { top: '24%', left: '8%'  },
 ];
 
 export const ChuryumovModel = React.memo(function ChuryumovModel({
@@ -39,7 +44,7 @@ export const ChuryumovModel = React.memo(function ChuryumovModel({
               style={{
                 top: POSITIONS[idx].top,
                 left: POSITIONS[idx].left,
-                width: 'clamp(82px, 14.5vmin, 130px)',
+                width: 'clamp(58px, 13vmin, 120px)',
                 aspectRatio: '1 / 1',
                 transform: 'translate(-50%, -50%)',
               }}

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { AnimatePresence } from 'motion/react';
 import {
   TRAITS_EN,
@@ -37,8 +37,27 @@ export default function App() {
   const [objectType, setObjectType] = useState<ObjectType>('TIM');
   const [modelType, setModelType] = useState<ModelType>('PROJECTIVE');
   const [view, setView] = useState<View>('EXPLORE');
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    const stored = window.localStorage.getItem('socionics-theme');
+    if (stored === 'light') return false;
+    if (stored === 'dark') return true;
+    return true;
+  });
   const [showAbout, setShowAbout] = useState(false);
+
+  // Sync theme to <html> so the page background covers the full viewport
+  // (especially on mobile where Safari/Chrome can expose body bg around React root).
+  useEffect(() => {
+    const root = document.documentElement;
+    if (darkMode) {
+      root.classList.remove('light');
+      window.localStorage.setItem('socionics-theme', 'dark');
+    } else {
+      root.classList.add('light');
+      window.localStorage.setItem('socionics-theme', 'light');
+    }
+  }, [darkMode]);
 
   const {
     hoveredIdx, setHoveredIdx,
@@ -88,7 +107,7 @@ export default function App() {
 
   return (
     <div
-      className={`h-screen w-screen grid select-none relative ${!darkMode ? 'light' : ''}`}
+      className="h-screen w-screen grid select-none relative"
       style={{
         gridTemplateRows: '64px 52px 1fr',
         backgroundColor: 'var(--bg)',

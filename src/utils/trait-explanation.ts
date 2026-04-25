@@ -9,6 +9,8 @@ import {
   HADAMARD_MATRIX,
   POLES_ADJ_RU,
   POLES_ADJ_EN,
+  POLES_NOUN_RU,
+  POLES_NOUN_EN,
 } from '../data';
 
 export interface TraitExplanationParams {
@@ -53,18 +55,35 @@ export function getTraitExplanation(
     RD: lang === 'RU' ? 'Существованию' : 'Existence',
   } as const;
 
+  const polesNoun = lang === 'RU' ? POLES_NOUN_RU : POLES_NOUN_EN;
+  const polesAdj = lang === 'RU' ? POLES_ADJ_RU : POLES_ADJ_EN;
+  const relationsSuffix = lang === 'RU' ? 'отношения' : 'relations';
+
+  // Always-available cross-references at the column index.
+  const corrTim = tims[traitIdx];
+  const corrItr = itrs[traitIdx] ?? '';
+  const corrTraitFull = poles[traitIdx]
+    ? `${poles[traitIdx][0]}/${poles[traitIdx][1]}`
+    : traits[traitIdx] ?? '';
+
   let subjectName = '';
   let poleName = '';
   let fullTrait = '';
   let description = '';
+  let footerLine = '';
+
+  const N = traitIdx + 1;
 
   if (objectType === 'TIM') {
     const activeTIM = currentObjects[itemIdx];
-    subjectName = `${activeTIM.id} (${activeTIM.name})`;
-    poleName = poles[traitIdx] ? poles[traitIdx][bit === 1 ? 0 : 1] : '';
-    fullTrait = poles[traitIdx]
-      ? `${poles[traitIdx][0]}/${poles[traitIdx][1]}`
-      : traits[traitIdx] || '';
+    // "СЭИ (Дюма)"
+    subjectName = activeTIM.name && activeTIM.name !== activeTIM.id
+      ? `${activeTIM.id} (${activeTIM.name})`
+      : activeTIM.id;
+    // pole — singular noun (uppercase rendering done in tooltip)
+    poleName = polesNoun[traitIdx]?.[bit === 1 ? 0 : 1] ?? '';
+    fullTrait = corrTraitFull;
+    footerLine = `BIT index = ${N} ~ ${corrTraitFull} ~ ${corrTim?.id ?? ''} ~ ${corrItr}`;
 
     description =
       lang === 'RU'
@@ -80,18 +99,34 @@ export function getTraitExplanation(
           'Достоевские имеют тенденцию обращать внимание на характеристики объектов, которые обусловлены принадлежностями к группам. Это можно назвать "инклюзивные" характеристики. Они включены в свойства объекта и всех других объектов, которые принадлежат к группе.';
       }
     }
-  } else if (objectType === 'RD') {
-    const targetTIM = tims[traitIdx];
-    subjectName = targetTIM.id;
-    poleName = poles[itemIdx] ? poles[itemIdx][bit === 1 ? 0 : 1] : '';
-    fullTrait = poles[itemIdx]
-      ? `${poles[itemIdx][0]}/${poles[itemIdx][1]}`
-      : traits[itemIdx] || '';
+  } else if (objectType === 'ITR') {
+    // Subject is the relationship name in adjectival form: "Демократические отношения"
+    const adj = polesAdj[traitIdx]?.[bit === 1 ? 0 : 1] ?? '';
+    subjectName = adj ? `${adj} ${relationsSuffix}` : currentObjects[itemIdx]?.id ?? '';
+    poleName = '';
+    fullTrait = corrTraitFull;
+    footerLine = `BIT index = ${N} ~ ${corrTraitFull} ~ ${corrTim?.id ?? ''} ~ ${corrItr}`;
 
     description =
       lang === 'RU'
-        ? `Этот паттерн показывает положение типа ${targetTIM.id} относительно дихотомии ${fullTrait}.`
-        : `This pattern shows the position of type ${targetTIM.id} relative to the dichotomy ${fullTrait}.`;
+        ? 'Описание интертипного отношения в данной мерности (текст будет дополнен позже).'
+        : 'Description of the intertype relation in this dimension (placeholder).';
+  } else {
+    // RD / Trait view: hovering bit at column traitIdx of trait row itemIdx.
+    // Subject is the TIM at traitIdx, with the pole the TIM holds on this trait.
+    const targetTIM = corrTim;
+    subjectName = targetTIM?.id ?? '';
+    poleName = polesNoun[itemIdx]?.[bit === 1 ? 0 : 1] ?? '';
+    fullTrait = poles[itemIdx]
+      ? `${poles[itemIdx][0]}/${poles[itemIdx][1]}`
+      : traits[itemIdx] ?? '';
+    // Footer order for RD view: TIM ~ ITR ~ TRAIT (all at column traitIdx)
+    footerLine = `BIT index = ${N} ~ ${targetTIM?.id ?? ''} ~ ${corrItr} ~ ${corrTraitFull}`;
+
+    description =
+      lang === 'RU'
+        ? `Положение типа ${targetTIM?.id ?? ''} относительно дихотомии ${fullTrait} (текст будет дополнен позже).`
+        : `Position of type ${targetTIM?.id ?? ''} relative to dichotomy ${fullTrait} (placeholder).`;
 
     if (lang === 'RU') {
       if (itemIdx === 4 && traitIdx === 15) {
@@ -103,18 +138,6 @@ export function getTraitExplanation(
           'Экстраверты более шумные и активные, легко тратят энергию, заводят новые знакомства. Конкретно про Штира можно сказать, что он довольно глубоко считывает внешнюю информацию о деятельности и технологиях.';
       }
     }
-  } else {
-    const activeITR = currentObjects[itemIdx];
-    const polesAdj = lang === 'RU' ? POLES_ADJ_RU : POLES_ADJ_EN;
-    subjectName = activeITR.id;
-    poleName = polesAdj[traitIdx] ? polesAdj[traitIdx][bit === 1 ? 0 : 1] : '';
-    fullTrait = poles[traitIdx]
-      ? `${poles[traitIdx][0]}/${poles[traitIdx][1]}`
-      : traits[traitIdx] || '';
-    description =
-      lang === 'RU'
-        ? 'Описание интертипного отношения в данной мерности.'
-        : 'Description of the intertype relation in this dimension.';
   }
 
   return {
@@ -123,11 +146,10 @@ export function getTraitExplanation(
     bit,
     description,
     fullTrait,
-    correspondingTim: tims[traitIdx],
-    correspondingItr: itrs[traitIdx],
-    correspondingRd: poles[traitIdx]
-      ? `${poles[traitIdx][0]}/${poles[traitIdx][1]}`
-      : traits[traitIdx] || '',
+    correspondingTim: corrTim,
+    correspondingItr: corrItr,
+    correspondingRd: corrTraitFull,
     equivalenceBase: baseNames[objectType],
+    footerLine,
   };
 }

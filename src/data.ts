@@ -86,6 +86,45 @@ export const POLES_ADJ_EN: string[][] = [
   ["Static", "Dynamic"]
 ];
 
+/** Singular noun form, masculine — used as subject pole label (e.g. "БЕСПЕЧНЫЙ", "Аристократ"). */
+export const POLES_NOUN_RU: string[][] = [
+  ["Существующий", "Несуществующий"],
+  ["Экстраверт", "Интроверт"],
+  ["Беспечный", "Предусмотрительный"],
+  ["Интуит", "Сенсорик"],
+  ["Демократ", "Аристократ"],
+  ["Позитивист", "Негативист"],
+  ["Уступчивый", "Упрямый"],
+  ["Логик", "Этик"],
+  ["Весёлый", "Серьёзный"],
+  ["Конструктивист", "Эмотивист"],
+  ["Правый", "Левый"],
+  ["Квестим", "Деклатим"],
+  ["Рассудительный", "Решительный"],
+  ["Тактик", "Стратег"],
+  ["Иррационал", "Рационал"],
+  ["Статик", "Динамик"]
+];
+
+export const POLES_NOUN_EN: string[][] = [
+  ["Existent", "Non-existent"],
+  ["Extravert", "Introvert"],
+  ["Carefree", "Farsighted"],
+  ["Intuitive", "Sensor"],
+  ["Democrat", "Aristocrat"],
+  ["Positivist", "Negativist"],
+  ["Yielding", "Obstinate"],
+  ["Logician", "Ethicist"],
+  ["Merry", "Serious"],
+  ["Constructivist", "Emotivist"],
+  ["Right", "Left"],
+  ["Questor", "Declarer"],
+  ["Judicious", "Decisive"],
+  ["Tactician", "Strategist"],
+  ["Irrational", "Rational"],
+  ["Static", "Dynamic"]
+];
+
 export const SEMANTICS_RU: string[] = [
   "Внимание экстравертов больше направлено на внешний мир, интровертов — на внутренний.",
   "Беспечные верят в новый опыт, предусмотрительные опираются на старый.",

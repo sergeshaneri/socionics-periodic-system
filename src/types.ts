@@ -52,6 +52,8 @@ export interface TraitExplanation {
   correspondingItr: string;
   correspondingRd: string;
   equivalenceBase: string;
+  /** Pre-composed footer line (BIT index = N ~ ... ~ ... ~ ...). */
+  footerLine: string;
 }
 
 export interface ModelProps {
